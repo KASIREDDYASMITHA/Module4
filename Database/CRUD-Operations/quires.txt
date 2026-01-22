@@ -1,0 +1,82 @@
+Step 1: Create Table
+CREATE TABLE students (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    age INTEGER,
+    course TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+ Output: Table created successfully
+
+
+Step 2: Insert Data (6 sample records)
+INSERT INTO students (name, email, age, course)
+VALUES
+('Rahul Sharma', 'rahul.sharma@example.com', 22, 'Computer Science'),
+('Priya Mehta', 'priya.mehta@example.com', 19, 'Data Science'),
+('Arjun Reddy', 'arjun.reddy@example.com', 24, 'Artificial Intelligence'),
+('Sneha Kapoor', 'sneha.kapoor@example.com', 21, 'Web Development'),
+('Vikram Singh', 'vikram.singh@example.com', 20, 'Cloud Computing'),
+('Asmitha Kasireddy', 'asmitha.k@example.com', 23, 'Machine Learning');
+ Output: 6 rows inserted successfully
+
+
+ Step 3: Read Data
+  Fetch all students
+SELECT * FROM students;
+-- Output:
+-- id | name            | email                        | age | course                  | created_at
+-- 1  | Rahul Sharma    | rahul.sharma@example.com     | 22  | Computer Science        | 2026-01-22 21:52:00
+-- 2  | Priya Mehta     | priya.mehta@example.com      | 19  | Data Science            | 2026-01-22 21:52:00
+-- 3  | Arjun Reddy     | arjun.reddy@example.com      | 24  | Artificial Intelligence | 2026-01-22 21:52:00
+-- 4  | Sneha Kapoor    | sneha.kapoor@example.com     | 21  | Web Development         | 2026-01-22 21:52:00
+-- 5  | Vikram Singh    | vikram.singh@example.com     | 20  | Cloud Computing         | 2026-01-22 21:52:00
+-- 6  | Asmitha Kasireddy | asmitha.k@example.com      | 23  | Machine Learning        | 2026-01-22 21:52:00
+
+Fetch students older than 20
+SELECT * FROM students WHERE age > 20;
+Output: Returns Rahul Sharma, Arjun Reddy, Sneha Kapoor, Asmitha Kasireddy
+
+
+ Fetch only name and email
+SELECT name, email FROM students;
+-- Output:
+-- name             | email
+-- Rahul Sharma     | rahul.sharma@example.com
+-- Priya Mehta      | priya.mehta@example.com
+-- Arjun Reddy      | arjun.reddy@example.com
+-- Sneha Kapoor     | sneha.kapoor@example.com
+-- Vikram Singh     | vikram.singh@example.com
+-- Asmitha Kasireddy| asmitha.k@example.com
+
+
+Fetch students enrolled in a specific course (example: Data Science)
+SELECT * FROM students WHERE course = 'Data Science';
+Output: Returns Priya Mehta
+
+
+Step 4: Update Data
+Update the age of one student (example: Rahul Sharma)
+UPDATE students
+SET age = 23
+WHERE name = 'Rahul Sharma';
+Output: 1 row updated successfully
+
+
+Update the course for all students enrolled in one course (example: Web Development → Full Stack Development)
+UPDATE students
+SET course = 'Full Stack Development'
+WHERE course = 'Web Development';
+Output: 1 row updated successfully
+
+
+Step 5: Delete Data
+Delete one student using id (example: id = 3)
+DELETE FROM students WHERE id = 3;
+Output: 1 row deleted successfully
+
+
+Delete all students below a certain age (example: age < 20)
+DELETE FROM students WHERE age < 20;
+Output: 1 row deleted successfully (Priya Mehta)
