@@ -1,0 +1,179 @@
+-- Step 1: Create the students table
+CREATE TABLE students (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    age INTEGER NOT NULL,
+    course TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Step 2: Insert sample values
+INSERT INTO students (name, email, age, course, created_at)
+VALUES
+('Ramesh', 'ramesh@example.com', 19, 'Data Science', '2026-01-05 09:00:00'),
+('Arjun', 'arjun@example.com', 22, 'Cloud Computing', '2026-01-08 13:40:00'),
+('Anjali', 'anjali@example.com', 24, 'Data Science', '2026-01-10 11:00:00'),
+('Meera', 'meera@example.com', 18, 'Machine Learning', '2026-01-11 15:10:00'),
+('Kiran', 'kiran@example.com', 23, 'Web Technology', '2026-01-12 16:20:00'),
+('Sneha', 'sneha@example.com', 21, 'Web Technology', '2026-01-15 14:45:00'),
+('Rahul', 'rahul@example.com', 25, 'Machine Learning', '2026-01-18 09:30:00'),
+('Priya', 'priya@example.com', 22, 'Data Science', '2026-01-20 10:15:00');
+
+-- Step 3: Verify inserted data
+SELECT * FROM students;
+
+-- Output:
+ id |  name   |        email         | age |      course       |     created_at
+----+---------+----------------------+-----+------------------+---------------------
+  1 | Ramesh  | ramesh@example.com   | 19  | Data Science     | 2026-01-05 09:00:00
+  2 | Arjun   | arjun@example.com    | 22  | Cloud Computing  | 2026-01-08 13:40:00
+  3 | Anjali  | anjali@example.com   | 24  | Data Science     | 2026-01-10 11:00:00
+  4 | Meera   | meera@example.com    | 18  | Machine Learning | 2026-01-11 15:10:00
+  5 | Kiran   | kiran@example.com    | 23  | Web Technology   | 2026-01-12 16:20:00
+  6 | Sneha   | sneha@example.com    | 21  | Web Technology   | 2026-01-15 14:45:00
+  7 | Rahul   | rahul@example.com    | 25  | Machine Learning | 2026-01-18 09:30:00
+  8 | Priya   | priya@example.com    | 22  | Data Science     | 2026-01-20 10:15:00
+
+
+-- 1. Count the total number of students
+SELECT COUNT(*) AS total_students FROM students;
+
+-- Output:
+ total_students
+---------------
+ 8
+
+
+-- 2. Find the average age of students
+SELECT AVG(age) AS average_age FROM students;
+
+-- Output:
+ average_age
+-------------
+ 21.75
+
+
+-- 3. Find the minimum and maximum age
+SELECT MIN(age) AS min_age, MAX(age) AS max_age FROM students;
+
+-- Output:
+ min_age | max_age
+---------+---------
+ 18      | 25
+
+
+-- 4. Count how many students are enrolled in each course
+SELECT course, COUNT(*) AS student_count
+FROM students
+GROUP BY course;
+
+-- Output:
+      course       | student_count
+------------------+---------------
+ Data Science     | 3
+ Web Technology   | 2
+ Machine Learning | 2
+ Cloud Computing  | 1
+
+
+-- 5. Count students whose age is greater than 20
+SELECT COUNT(*) AS students_above_20
+FROM students
+WHERE age > 20;
+
+-- Output:
+ students_above_20
+-------------------
+ 5
+
+
+-- Step 3: Grouping & Filtering
+
+-- 6. Display course-wise student count
+SELECT course, COUNT(*) AS student_count
+FROM students
+GROUP BY course;
+
+-- Output:
+      course       | student_count
+------------------+---------------
+ Data Science     | 3
+ Web Technology   | 2
+ Machine Learning | 2
+ Cloud Computing  | 1
+
+
+-- 7. Display only courses where student count is greater than 1
+SELECT course, COUNT(*) AS student_count
+FROM students
+GROUP BY course
+HAVING COUNT(*) > 1;
+
+-- Output:
+      course       | student_count
+------------------+---------------
+ Data Science     | 3
+ Web Technology   | 2
+ Machine Learning | 2
+
+
+-- 8. Display courses sorted by highest student count first
+SELECT course, COUNT(*) AS student_count
+FROM students
+GROUP BY course
+ORDER BY student_count DESC;
+
+-- Output:
+      course       | student_count
+------------------+---------------
+ Data Science     | 3
+ Web Technology   | 2
+ Machine Learning | 2
+ Cloud Computing  | 1
+
+
+-- Step 4: Ordering & Limiting
+
+-- 9. Fetch the latest 3 students based on created_at
+SELECT *
+FROM students
+ORDER BY created_at DESC
+LIMIT 3;
+
+-- Output:
+ id |  name  |        email         | age |      course       |     created_at
+----+--------+----------------------+-----+------------------+---------------------
+  8 | Priya  | priya@example.com    | 22  | Data Science     | 2026-01-20 10:15:00
+  7 | Rahul  | rahul@example.com    | 25  | Machine Learning | 2026-01-18 09:30:00
+  6 | Sneha  | sneha@example.com    | 21  | Web Technology   | 2026-01-15 14:45:00
+
+
+-- 10. Fetch the top 5 oldest students
+SELECT *
+FROM students
+ORDER BY age DESC
+LIMIT 5;
+
+-- Output:
+ id |  name   |        email         | age |      course       |     created_at
+----+---------+----------------------+-----+------------------+---------------------
+  7 | Rahul   | rahul@example.com    | 25  | Machine Learning | 2026-01-18 09:30:00
+  3 | Anjali  | anjali@example.com   | 24  | Data Science     | 2026-01-10 11:00:00
+  5 | Kiran   | kiran@example.com    | 23  | Web Technology   | 2026-01-12 16:20:00
+  2 | Arjun   | arjun@example.com    | 22  | Cloud Computing  | 2026-01-08 13:40:00
+  8 | Priya   | priya@example.com    | 22  | Data Science     | 2026-01-20 10:15:00
+
+
+-- 11. Fetch students enrolled in a specific course (example: 'Data Science'), sorted by age descending
+SELECT *
+FROM students
+WHERE course = 'Data Science'
+ORDER BY age DESC;
+
+-- Output:
+ id |  name   |        email         | age |    course     |     created_at
+----+---------+----------------------+-----+---------------+---------------------
+  3 | Anjali  | anjali@example.com   | 24  | Data Science  | 2026-01-10 11:00:00
+  8 | Priya   | priya@example.com    | 22  | Data Science  | 2026-01-20 10:15:00
+  1 | Ramesh  | ramesh@example.com   | 19  | Data Science  | 2026-01-05 09:00:00
