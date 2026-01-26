@@ -1,0 +1,151 @@
+STEP 1: CREATE TABLES
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE orders (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    amount INTEGER NOT NULL,
+    status TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+OUTPUT: Tables created successfully
+
+STEP 2: INSERT DATA
+INSERT INTO users (name, email) VALUES
+('Alice', 'alice@example.com'),
+('Bob', 'bob@example.com'),
+('Charlie', 'charlie@example.com'),
+('David', 'david@example.com'),
+('Eve', 'eve@example.com');
+
+INSERT INTO orders (user_id, amount, status) VALUES
+(1, 200, 'Pending'),
+(1, 150, 'Completed'),
+(2, 300, 'Pending'),
+(2, 100, 'Completed'),
+(3, 400, 'Shipped'),
+(3, 250, 'Pending'),
+(4, 500, 'Completed'),
+(5, 350, 'Pending'),
+(5, 200, 'Shipped'),
+(5, 100, 'Completed');
+
+OUTPUT: 5 users inserted, 10 orders inserted
+
+
+STEP 3: READ DATA
+
+Fetch all users
+SELECT * FROM users;
+
+OUTPUT:
+ id |  name   |        email         |        created_at
+----+---------+----------------------+----------------------------
+  1 | Alice   | alice@example.com    | 2026-01-26 21:30:00
+  2 | Bob     | bob@example.com      | 2026-01-26 21:30:00
+  3 | Charlie | charlie@example.com  | 2026-01-26 21:30:00
+  4 | David   | david@example.com    | 2026-01-26 21:30:00
+  5 | Eve     | eve@example.com      | 2026-01-26 21:30:00
+
+Fetch all orders
+SELECT * FROM orders;
+
+OUTPUT:
+ id | user_id | amount |  status    |        created_at
+----+---------+--------+------------+----------------------------
+  1 |   1     |  200   | Pending    | 2026-01-26 21:30:00
+  2 |   1     |  150   | Completed  | 2026-01-26 21:30:00
+  3 |   2     |  300   | Pending    | 2026-01-26 21:30:00
+  4 |   2     |  100   | Completed  | 2026-01-26 21:30:00
+  5 |   3     |  400   | Shipped    | 2026-01-26 21:30:00
+  6 |   3     |  250   | Pending    | 2026-01-26 21:30:00
+  7 |   4     |  500   | Completed  | 2026-01-26 21:30:00
+  8 |   5     |  350   | Pending    | 2026-01-26 21:30:00
+  9 |   5     |  200   | Shipped    | 2026-01-26 21:30:00
+ 10 |   5     |  100   | Completed  | 2026-01-26 21:30:00
+
+Fetch all orders for a specific user (Alice, id=1)
+SELECT * FROM orders WHERE user_id = 1;
+
+OUTPUT:
+ id | user_id | amount |  status    | created_at
+----+---------+--------+------------+----------------------------
+  1 |   1     |  200   | Pending    | 2026-01-26 21:30:00
+  2 |   1     |  150   | Completed  | 2026-01-26 21:30:00
+
+Fetch users who have more than one order
+SELECT u.id, u.name, COUNT(o.id) AS order_count
+FROM users u
+JOIN orders o ON u.id = o.user_id
+GROUP BY u.id
+HAVING COUNT(o.id) > 1;
+
+OUTPUT:
+ id |  name   | order_count
+----+---------+-------------
+  1 | Alice   | 2
+  3 | Charlie | 2
+  5 | Eve     | 3
+
+Fetch total order amount per user
+SELECT u.id, u.name, SUM(o.amount) AS total_amount
+FROM users u
+JOIN orders o ON u.id = o.user_id
+GROUP BY u.id;
+
+OUTPUT:
+ id |  name   | total_amount
+----+---------+--------------
+  1 | Alice   | 350
+  2 | Bob     | 400
+  3 | Charlie | 650
+  4 | David   | 500
+  5 | Eve     | 650
+
+STEP 4: UPDATE DATA
+
+Update the email of Bob
+UPDATE users SET email = 'bob.new@example.com' WHERE id = 2;
+
+OUTPUT: Bob’s email updated
+
+Update the status of all orders for Charlie
+UPDATE orders SET status = 'Delivered' WHERE user_id = 3;
+
+OUTPUT: Charlie’s orders now show status = Delivered
+
+Update order amount for order_id = 1
+UPDATE orders SET amount = 220 WHERE id = 1;
+
+OUTPUT: Order ID 1 amount updated to 220
+
+STEP 5: DELETE DATA
+
+Delete one order using order id (id=2)
+DELETE FROM orders WHERE id = 2;
+
+OUTPUT: Order ID 2 deleted
+
+Delete all orders of Eve (user_id=5)
+DELETE FROM orders WHERE user_id = 5;
+
+OUTPUT: All orders of Eve deleted
+
+Attempt deleting Alice (user_id=1)
+DELETE FROM users WHERE id = 1;
+
+OUTPUT:
+If ON DELETE CASCADE is set → Alice deleted along with her orders
+If not → ERROR: update or delete on table "users" violates foreign key constraint
+
+STEP 6: CONCEPTUAL QUESTION
+
+Why should orders not be stored inside the users table?
+Because orders are a separate entity with potentially multiple records per user.
+Storing them inside users would cause redundancy, poor scalability, and violate normalization.
